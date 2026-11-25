@@ -21,7 +21,19 @@ const MONOLOGUE = [
   "it all from my bed.",
 ].join(" ");
 
+// Fail loudly rather than write an entry the gate would refuse:
+// the brief wants about 100 words and the gate wants 1 to 600 characters.
+function assertGate(text: string): void {
+  const words = text.split(/\s+/).filter(Boolean).length;
+  const chars = [...text].length;
+  if (words !== 100) throw new Error(`monologue is ${words} words, want 100`);
+  if (chars < 1 || chars > 600) {
+    throw new Error(`monologue is ${chars} characters, gate is 1 to 600`);
+  }
+}
+
 function main(): void {
+  assertGate(MONOLOGUE);
   const outDir = process.env.OUTPUT_DIR ?? "/output";
   mkdirSync(outDir, { recursive: true });
   writeFileSync(join(outDir, "entry.txt"), MONOLOGUE, "utf8");
